@@ -7,14 +7,15 @@ interface WelcomeAnimationProps {
 }
 
 const greetings = [
-  'Welcome',
-  'Vanakkam',
-  'Namaste',
-  'Swagatam',
-  'Suswagatam',
-  'Nomoshkar',
-  'Salaam'
+  "வணக்கம்",
+  "Welcome",                // English                // Tamil (Vanakkam)
+  "नमस्ते",                 // Hindi / Sanskrit (Namaste)
+  "स्वागतं",                // Sanskrit (Swagatam)
+  "सुस्वागतम्",              // Sanskrit / Marathi (Suswagatam)
+  "नमस्कार",                // Hindi / Marathi / Bengali (Namaskar)
+  "السلام عليكم",           // Arabic (Assalamu Alaikum)
 ];
+
 
 export default function WelcomeAnimation({ onComplete }: WelcomeAnimationProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,9 +24,9 @@ export default function WelcomeAnimation({ onComplete }: WelcomeAnimationProps) 
   useEffect(() => {
     const colors = ['#a855f7', '#8b5cf6', '#7c3aed', '#6366f1', '#3b82f6'];
     
-    const duration = 3000;
+    const duration = 7000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const defaults = { startVelocity: 50, spread: 360, ticks: 60, zIndex: 0 };
 
     function randomInRange(min: number, max: number) {
       return Math.random() * (max - min) + min;
@@ -57,22 +58,23 @@ export default function WelcomeAnimation({ onComplete }: WelcomeAnimationProps) 
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (currentIndex < greetings.length - 1) {
-      const timer = setTimeout(() => {
-        setCurrentIndex(currentIndex + 1);
-      }, 400);
-      return () => clearTimeout(timer);
-    } else {
-      const timer = setTimeout(() => {
-        setIsComplete(true);
-        setTimeout(() => {
-          onComplete();
-        }, 500);
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [currentIndex, onComplete]);
+useEffect(() => {
+  if (currentIndex < greetings.length - 1) {
+    const timer = setTimeout(() => {
+      setCurrentIndex(currentIndex + 1);
+    }, 900); // slower, ~0.9s per greeting
+    return () => clearTimeout(timer);
+  } else {
+    const timer = setTimeout(() => {
+      setIsComplete(true);
+      setTimeout(() => {
+        onComplete();
+      }, 500);
+    }, 1200); // slightly longer delay before completing
+    return () => clearTimeout(timer);
+  }
+}, [currentIndex, onComplete]);
+
 
   return (
     <motion.div

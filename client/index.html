@@ -2,15 +2,57 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
     <title>Digikets Marketing - Digital Excellence for Your Brand</title>
-    <meta name="description" content="Digikets Marketing delivers creative digital marketing solutions including SEO, social media marketing, content creation, and web development. Transform your brand with our expert strategies." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta
+      name="description"
+      content="Digikets Marketing delivers creative digital marketing solutions including SEO, social media marketing, content creation, and web development. Transform your brand with our expert strategies."
+    />
+
+    <!-- ✅ Favicon (make sure logo.svg is inside /public) -->
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="alternate icon" type="image/png" href="/logo.png" />
+
+    <!-- ✅ Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ✅ Theme Color for Mobile UI -->
+    <meta name="theme-color" content="#0d0d0d" />
+
+    <!-- ✅ Open Graph (for better sharing previews) -->
+    <meta property="og:title" content="Digikets Marketing" />
+    <meta
+      property="og:description"
+      content="Digital marketing, SEO, social media, and web development that transforms your brand."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo.png" />
+    <meta property="og:url" content="https://yourdomain.com" />
+
+    <!-- ✅ Smooth Animations -->
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background-color: #000;
+        color: #fff;
+        overflow-x: hidden;
+      }
+    </style>
   </head>
+
   <body>
     <div id="root"></div>
+
+    <!-- ✅ Vite/React Entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Mail, Phone, MessageCircle, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -14,193 +14,265 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function ContactSection() {
+interface ContactSectionProps {
+  darkMode?: boolean;
+}
+
+export default function ContactSection({ darkMode }: ContactSectionProps) {
   const { toast } = useToast();
+
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    service: '',
-    message: '',
+    name: "",
+    email: "",
+    phone: "",
+    service: "",
+    message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+
+    try {
+      const response = await fetch("http://localhost:5000/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Message Sent!",
+          description: "We'll get back to you within 24 hours.",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: "",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Failed to send message. Please try again.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Network error. Please try again later.",
+      });
+      console.error("Send email error:", error);
+    }
   };
 
   const contactMethods = [
     {
       icon: MessageCircle,
-      title: 'WhatsApp',
-      value: '+91 98765 43210',
-      action: () => window.open('https://wa.me/919876543210', '_blank'),
-      buttonText: 'Chat on WhatsApp',
+      title: "WhatsApp",
+      value: "+91 63818 11157",
+      action: () => window.open("https://wa.me/6381811157", "_blank"),
+      buttonText: "Chat on WhatsApp",
     },
     {
       icon: Mail,
-      title: 'Email',
-      value: 'hello@digikets.com',
-      action: () => window.location.href = 'mailto:hello@digikets.com',
-      buttonText: 'Send Email',
+      title: "Email",
+      value: "digikettsmarketting@gmail.com",
+      action: () =>
+        (window.location.href = "mailto:digikettsmarketting@gmail.com"),
+      buttonText: "Send Email",
     },
     {
       icon: Phone,
-      title: 'Phone',
-      value: '+91 98765 43210',
-      action: () => window.location.href = 'tel:+919876543210',
-      buttonText: 'Call Now',
+      title: "Phone",
+      value: "+91 9500145665",
+      action: () => (window.location.href = "tel:+919500145665"),
+      buttonText: "Call Now",
     },
   ];
 
-  return (
-    <section id="contact" className="py-20 lg:py-32 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-display font-bold">
-            Let's{' '}
-            <span className="bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
-              Connect
-            </span>
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Ready to transform your digital presence? Reach out and let's create something amazing together.
-          </p>
-        </motion.div>
+  // Theme-based colors
+  const sectionBg = darkMode
+    ? "bg-black text-white border-t border-gray-800"
+    : "bg-white text-gray-900 border-t border-gray-200";
 
-        <div className="grid lg:grid-cols-2 gap-12">
+  const cardBg = darkMode
+    ? "bg-neutral-900/80 text-white border border-gray-800 backdrop-blur-sm"
+    : "bg-white text-gray-900 border border-gray-200";
+
+  const mutedText = darkMode ? "text-gray-400" : "text-gray-600";
+  const accentGradient = "bg-gradient-to-br from-primary to-chart-2";
+  const accentText =
+    "bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent";
+
+  return (
+    <section
+      id="contact"
+      className={`relative z-10 overflow-hidden py-20 lg:py-32 transition-colors duration-500 ${sectionBg}`}
+    >
+      {/* Background */}
+      <div className={`absolute inset-0 ${sectionBg} z-0`} />
+
+      {/* Centered Container */}
+      <div className="relative z-10 flex justify-center">
+        <div className="max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+          {/* Heading */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center mb-14"
           >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">Send us a message</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
+            <h2 className="text-4xl md:text-5xl font-display font-bold">
+              Let’s <span className={accentText}>Connect</span>
+            </h2>
+            <p
+              className={`mt-4 text-base sm:text-lg max-w-2xl mx-auto ${mutedText}`}
+            >
+              Ready to transform your digital presence? Reach out and let’s
+              create something amazing together.
+            </p>
+          </motion.div>
+
+          {/* Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start justify-items-center">
+            {/* Left - Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="w-full max-w-lg"
+            >
+              <Card className={`${cardBg} transition-all duration-500`}>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-semibold">
+                    Send us a message
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
                       placeholder="Your Name"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       required
-                      data-testid="input-name"
                     />
-                  </div>
-                  <div>
                     <Input
                       type="email"
                       placeholder="Email Address"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       required
-                      data-testid="input-email"
                     />
-                  </div>
-                  <div>
                     <Input
                       type="tel"
                       placeholder="Phone Number"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      data-testid="input-phone"
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
                     />
-                  </div>
-                  <div>
-                    <Select value={formData.service} onValueChange={(value) => setFormData({ ...formData, service: value })}>
-                      <SelectTrigger data-testid="select-service">
+                    <Select
+                      value={formData.service}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, service: value })
+                      }
+                    >
+                      <SelectTrigger>
                         <SelectValue placeholder="Select Service" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="seo">SEO Optimization</SelectItem>
-                        <SelectItem value="social">Social Media Marketing</SelectItem>
-                        <SelectItem value="content">Content Creation</SelectItem>
+                        <SelectItem value="social">
+                          Social Media Marketing
+                        </SelectItem>
+                        <SelectItem value="content">
+                          Content Creation
+                        </SelectItem>
                         <SelectItem value="brand">Brand Strategy</SelectItem>
                         <SelectItem value="web">Web Development</SelectItem>
-                        <SelectItem value="analytics">Analytics & Insights</SelectItem>
+                        <SelectItem value="analytics">
+                          Analytics & Insights
+                        </SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div>
                     <Textarea
                       placeholder="Tell us about your project..."
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
                       required
                       rows={4}
-                      data-testid="input-message"
                     />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-primary to-chart-2"
-                    data-testid="button-submit-contact"
-                  >
-                    Send Message
-                    <Send className="ml-2 h-4 w-4" />
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </motion.div>
+                    <Button type="submit" className={`w-full ${accentGradient}`}>
+                      Send Message
+                      <Send className="ml-2 h-4 w-4" />
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="space-y-6"
-          >
-            <div>
-              <h3 className="text-2xl font-display font-bold mb-6">Get in touch directly</h3>
-              <div className="space-y-4">
+            {/* Right - Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="space-y-6 w-full max-w-lg"
+            >
+              <h3 className="text-2xl font-display font-bold mb-6 text-center lg:text-left">
+                Get in touch directly
+              </h3>
+
+              <div className="flex flex-col gap-5">
                 {contactMethods.map((method, index) => (
-                  <Card key={index} className="hover-elevate transition-all" data-testid={`contact-card-${index}`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-chart-2 flex items-center justify-center flex-shrink-0">
-                          <method.icon className="h-6 w-6 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-foreground">{method.title}</h4>
-                          <p className="text-sm text-muted-foreground" data-testid={`contact-value-${index}`}>{method.value}</p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          onClick={method.action}
-                          data-testid={`button-contact-${index}`}
-                        >
-                          {method.buttonText}
-                        </Button>
+                  <Card
+                    key={index}
+                    className={`${cardBg} hover:shadow-lg hover:scale-[1.02] transition-all duration-300`}
+                  >
+                    <CardContent className="p-5 flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                      <div
+                        className={`w-12 h-12 rounded-lg ${accentGradient} flex items-center justify-center flex-shrink-0`}
+                      >
+                        <method.icon className="h-6 w-6 text-white" />
                       </div>
+                      <div className="flex-1 text-center sm:text-left">
+                        <h4 className="font-semibold">{method.title}</h4>
+                        <p className={`text-sm ${mutedText}`}>{method.value}</p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        className={`border ${
+                          darkMode
+                            ? "border-gray-700 text-gray-300 hover:bg-gray-800"
+                            : "border-gray-200 text-gray-700 hover:bg-gray-100"
+                        }`}
+                        onClick={method.action}
+                      >
+                        {method.buttonText}
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
-            </div>
 
-            <Card className="bg-gradient-to-br from-primary/10 to-chart-2/10 border-primary/20">
-              <CardContent className="p-6">
-                <h4 className="font-semibold text-foreground mb-2">Office Hours</h4>
-                <p className="text-sm text-muted-foreground">
-                  Monday - Friday: 9:00 AM - 6:00 PM IST<br />
-                  Saturday: 10:00 AM - 4:00 PM IST<br />
-                  Sunday: Closed
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
+              <Card className={`${cardBg}`}>
+                <CardContent className="p-6">
+                  <h4 className="font-semibold mb-2">Office Location</h4>
+                  <p className={`text-sm ${mutedText}`}>
+                    <b>Address:</b> Mudaliarpet, Pondicherry
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
