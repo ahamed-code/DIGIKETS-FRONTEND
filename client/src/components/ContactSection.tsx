@@ -29,44 +29,46 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
     message: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch("http://localhost:5000/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+  try {
+    const response = await fetch("https://digikets-backend.onrender.com/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you within 24 hours.",
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast({
-          title: "Message Sent!",
-          description: "We'll get back to you within 24 hours.",
-        });
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          service: "",
-          message: "",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: data.error || "Failed to send message. Please try again.",
-        });
-      }
-    } catch (error) {
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        message: "",
+      });
+    } else {
       toast({
         title: "Error",
-        description: "Network error. Please try again later.",
+        description: data.error || "Failed to send message. Please try again.",
       });
-      console.error("Send email error:", error);
     }
-  };
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "Network error. Please try again later.",
+    });
+    console.error("Send email error:", error);
+  }
+};
+
 
   const contactMethods = [
     {
