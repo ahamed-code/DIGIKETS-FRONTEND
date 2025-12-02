@@ -29,11 +29,11 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
     message: "",
   });
 
- const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   try {
-    const response = await fetch("https://digikets-backend.onrender.com/api/contact", {
+    const response = await fetch("https://digikets-backend.vercel.app/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
