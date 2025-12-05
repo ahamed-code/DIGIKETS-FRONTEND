@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import emailjs from "@emailjs/browser";   // ✅ Correct package
 import {
   Select,
   SelectContent,
@@ -13,8 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import emailjs from "emailjs-com";
 
 interface ContactSectionProps {
   darkMode?: boolean;
@@ -45,36 +44,30 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
       };
 
       const response = await emailjs.send(
-        "service_o01l9i4",        // your service ID
-        "template_oqo9kd7",      // your template ID
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         templateParams,
-        "a1jytWG67_Z5oFExj"      // your public key
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
 
-      if (response.status === 200) {
-        toast({
-          title: "Message Sent!",
-          description: "We'll get back to you within 24 hours.",
-        });
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
 
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          service: "",
-          message: "",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Something went wrong. Please try again.",
-        });
-      }
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        message: "",
+      });
+
     } catch (error) {
       console.error("EmailJS Error:", error);
       toast({
-        title: "Network Error",
-        description: "Please try again later.",
+        title: "Failed",
+        description: "Could not send your message. Try again later.",
       });
     }
   };
@@ -128,6 +121,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
 
       <div className="relative z-10 flex justify-center">
         <div className="max-w-7xl w-full px-4 sm:px-6 lg:px-8">
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -145,9 +139,8 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
             </p>
           </motion.div>
 
-          {/* Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start justify-items-center">
-            
+
             {/* Left: Form */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -161,6 +154,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                     Send us a message
                   </CardTitle>
                 </CardHeader>
+
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
@@ -171,6 +165,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                       }
                       required
                     />
+
                     <Input
                       type="email"
                       placeholder="Email Address"
@@ -180,6 +175,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                       }
                       required
                     />
+
                     <Input
                       type="tel"
                       placeholder="Phone Number"
@@ -188,6 +184,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                         setFormData({ ...formData, phone: e.target.value })
                       }
                     />
+
                     <Select
                       value={formData.service}
                       onValueChange={(value) =>
@@ -197,6 +194,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                       <SelectTrigger>
                         <SelectValue placeholder="Select Service" />
                       </SelectTrigger>
+
                       <SelectContent>
                         <SelectItem value="seo">SEO Optimization</SelectItem>
                         <SelectItem value="social">
@@ -212,6 +210,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                         </SelectItem>
                       </SelectContent>
                     </Select>
+
                     <Textarea
                       placeholder="Tell us about your project..."
                       value={formData.message}
@@ -221,6 +220,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                       required
                       rows={4}
                     />
+
                     <Button type="submit" className={`w-full ${accentGradient}`}>
                       Send Message
                       <Send className="ml-2 h-4 w-4" />
@@ -230,7 +230,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
               </Card>
             </motion.div>
 
-            {/* Right: Contact Info */}
+            {/* Right: Contact Methods */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -253,10 +253,12 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                       >
                         <method.icon className="h-6 w-6 text-white" />
                       </div>
+
                       <div className="flex-1 text-center sm:text-left">
                         <h4 className="font-semibold">{method.title}</h4>
                         <p className={`text-sm ${mutedText}`}>{method.value}</p>
                       </div>
+
                       <Button
                         variant="outline"
                         className={`border ${
@@ -282,6 +284,7 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
                 </CardContent>
               </Card>
             </motion.div>
+
           </div>
         </div>
       </div>

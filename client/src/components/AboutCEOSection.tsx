@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Quote, Award, Briefcase } from 'lucide-react';
 import { Avatar } from '@/components/ui/avatar';
-import owner from '../../../../asssets/owner.png';
+import owner from '../../../../../assets/owner.jpg';
 
 interface AboutCEOSectionProps {
   darkMode?: boolean;
