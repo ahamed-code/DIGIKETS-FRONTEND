@@ -14,6 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import emailjs from "emailjs-com";
+
 interface ContactSectionProps {
   darkMode?: boolean;
 }
@@ -29,47 +31,55 @@ export default function ContactSection({ darkMode }: ContactSectionProps) {
     message: "",
   });
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  // ---------- EMAILJS SUBMIT ----------
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  try {
-    const response = await fetch("https://digikets-backend.vercel.app/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        message: formData.message,
+      };
 
-    const data = await response.json();
+      const response = await emailjs.send(
+        "service_o01l9i4",        // your service ID
+        "template_oqo9kd7",      // your template ID
+        templateParams,
+        "a1jytWG67_Z5oFExj"      // your public key
+      );
 
-    if (response.ok) {
+      if (response.status === 200) {
+        toast({
+          title: "Message Sent!",
+          description: "We'll get back to you within 24 hours.",
+        });
+
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: "",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("EmailJS Error:", error);
       toast({
-        title: "Message Sent!",
-        description: "We'll get back to you within 24 hours.",
-      });
-
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        service: "",
-        message: "",
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: data.error || "Failed to send message. Please try again.",
+        title: "Network Error",
+        description: "Please try again later.",
       });
     }
-  } catch (error) {
-    toast({
-      title: "Error",
-      description: "Network error. Please try again later.",
-    });
-    console.error("Send email error:", error);
-  }
-};
+  };
 
-
+  // Contact Methods
   const contactMethods = [
     {
       icon: MessageCircle,
@@ -95,7 +105,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     },
   ];
 
-  // Theme-based colors
+  // Themes
   const sectionBg = darkMode
     ? "bg-black text-white border-t border-gray-800"
     : "bg-white text-gray-900 border-t border-gray-200";
@@ -114,13 +124,10 @@ const handleSubmit = async (e: React.FormEvent) => {
       id="contact"
       className={`relative z-10 overflow-hidden py-20 lg:py-32 transition-colors duration-500 ${sectionBg}`}
     >
-      {/* Background */}
       <div className={`absolute inset-0 ${sectionBg} z-0`} />
 
-      {/* Centered Container */}
       <div className="relative z-10 flex justify-center">
         <div className="max-w-7xl w-full px-4 sm:px-6 lg:px-8">
-          {/* Heading */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -138,9 +145,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             </p>
           </motion.div>
 
-          {/* Grid */}
+          {/* Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start justify-items-center">
-            {/* Left - Form */}
+            
+            {/* Left: Form */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -222,7 +230,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               </Card>
             </motion.div>
 
-            {/* Right - Contact Info */}
+            {/* Right: Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
